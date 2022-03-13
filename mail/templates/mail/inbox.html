@@ -2,20 +2,72 @@
 {% load static %}
 
 {% block body %}
+    <style>
+        table {
+    border-collapse: collapse;
+    width: 100%;
+}
+  
+th, td, tr {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #DDD;
+}
+  
+tr:hover {background-color: #D6EEEE;}
+    </style>
+    
     <h2>{{ request.user.email }}</h2>
 
+    <!-- inbox hides the compose-view and shows the emails-view -->
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
+    <!-- compose button should hide the emails-view and show the compose-view -->
     <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
     <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
     <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
-    <div id="emails-view">
+    <!-- the buttons above selectively show and hide these views -->
+
+    <!-- first div contains the content of an email mailbox -->
+    <div id="emails-view"></div>
+    
+    <table id="emails-list">
+    
+    </table>
+
+    <div id="view-email">
+
+        <div id="from">
+        </div>
+        <div id="to">
+            <strong>To: </strong> 
+        </div>
+        <div id="subject">
+        </div>
+        <div id="time"> 
+        </div>
+        <button class='btn btn-sm btn-outline-primary' id='reply'>Reply</button>
+        <hr>
+    
+        <div id="body">
+
+        </div> 
+  <!-- + "<br> <strong> To:</strong> "+ recipient 
+  + " <br> <strong> Subject:</strong> "+ subject 
+  + " <br><strong> Timestamp: </strong>"+ timestamp 
+  + " <br> "
+  + "<button class='btn btn-sm btn-outline-primary' id='reply'>Reply</button>"
+  + "<hr>"
+  + body; -->
+        
     </div>
 
+    <!-- a form in which the user can compose a new email -->
     <div id="compose-view">
         <h3>New Email</h3>
+        <div class="error" style="color: red;"></div>
         <form id="compose-form">
             <div class="form-group">
                 From: <input disabled class="form-control" value="{{ request.user.email }}">
