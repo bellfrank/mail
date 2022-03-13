@@ -56,6 +56,7 @@ function load_mailbox(mailbox) {
 
 
 function DisplayEmails(item){
+  
   //searching for table
   var table = document.querySelector('table');
   // adding a row
@@ -89,6 +90,13 @@ function DisplayEmails(item){
 }
 
 function view_email(item){
+  fetch(`/emails/${item.id}`,{
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+
+  })
 
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('table').style.display = 'none';
@@ -102,6 +110,7 @@ function view_email(item){
   document.querySelector('#time').innerHTML = "<strong>Timestamp: </strong>" + item.timestamp;
   document.querySelector('#body').innerHTML = item.body;
 
+
   document.querySelector('#reply').addEventListener('click', () => reply_email(item));
 }
 
@@ -110,7 +119,13 @@ function reply_email(item){
   compose_email();
   document.querySelector('#compose-recipients').value = item.sender;
   // must at some point check if the email already has Re: as subject line!
-  document.querySelector('#compose-subject').value = 'Re: ' + item.subject;
+  
+  if (item.subject.includes('Re: ')){
+    document.querySelector('#compose-subject').value = item.subject;
+  }
+  else{
+    document.querySelector('#compose-subject').value = 'Re: ' + item.subject;
+  }
   document.querySelector('#compose-body').value = `On ${item.timestamp} ${item.sender} wrote: ` + item.body;
   
 }
