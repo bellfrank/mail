@@ -25,10 +25,7 @@ function compose_email() {
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
 
-  // DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-  console.log("inside compose email"); 
 } 
-
 
 function load_mailbox(mailbox) {
   
@@ -37,28 +34,29 @@ function load_mailbox(mailbox) {
   document.querySelector('table').style.display = '';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#view-email').style.display = 'none';
+  var table = document.querySelector('tbody');
+  table.replaceChildren();
 
+  
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-  
+    
   // Fetching the mail for mailbox
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
+
     // Print emails
-
-    console.log(emails);
     emails.forEach(DisplayEmails);
-  
-  });
-  
-}
-
+    });
+  }
 
 function DisplayEmails(item){
   
   //searching for table
-  var table = document.querySelector('table');
+  var table = document.querySelector('tbody');
+  // somehow clear the tbody of the table here ?????
+  // table.replaceChildren();
   // adding a row
   var row = table.insertRow(0);
   // adding 3 cells to the row
@@ -66,8 +64,7 @@ function DisplayEmails(item){
   var cell2 = row.insertCell(1);
   var cell3 = row.insertCell(2);
 
-
-  cell1.innerHTML = item.read;
+  cell1.innerHTML = item.sender;
   cell2.innerHTML = item.subject;
   cell3.innerHTML = item.timestamp;
 
@@ -86,7 +83,7 @@ function DisplayEmails(item){
   cell3.addEventListener('click', function(){
     view_email(item);
   })
-
+  
 }
 
 function view_email(item){
@@ -152,8 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(result => {
         // Print result
-        console.log(result);
-        console.log(result[1])
 
         if (result.error){
           document.querySelector('.error').innerHTML = result.error;
