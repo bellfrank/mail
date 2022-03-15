@@ -28,6 +28,19 @@ function compose_email() {
 } 
 
 function load_mailbox(mailbox) {
+  let sentpath = false;
+  let archived = false;
+
+  if (mailbox == 'sent'){
+    sentpath = true;
+  }
+
+  if (mailbox == 'archive'){
+    archived = true;
+  }
+
+  console.log("first")
+  console.log(sentpath);
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
@@ -47,26 +60,45 @@ function load_mailbox(mailbox) {
   .then(emails => {
 
     // Print emails
-    emails.forEach(DisplayEmails);
+    console.log("before leaving");
+    console.log(sentpath);
+    // emails.forEach(DisplayEmails);
+    for (var i = 0; i < emails.length;++i){
+      DisplayEmails(emails[0], sentpath, archived);
+    }
+    // emails.forEach(email => DisplayEmails(email, sentpath));
+    
+    console.log("after returning");
+    console.log(sentpath);
     });
   }
 
-function DisplayEmails(item){
-  
+function DisplayEmails(item, sentpath, archived){
+  console.log("second");
+  console.log(sentpath);
   //searching for table
   var table = document.querySelector('tbody');
-  // somehow clear the tbody of the table here ?????
-  // table.replaceChildren();
+  
   // adding a row
   var row = table.insertRow(0);
   // adding 3 cells to the row
   var cell1 = row.insertCell(0);
   var cell2 = row.insertCell(1);
   var cell3 = row.insertCell(2);
+  var cell4 = row.insertCell(3);
 
   cell1.innerHTML = item.sender;
   cell2.innerHTML = item.subject;
   cell3.innerHTML = item.timestamp;
+  
+  if(!sentpath && !archived){
+    cell4.innerHTML = " <button id='inbox'> Archive </button>";
+  }
+
+  if(archived){
+    cell4.innerHTML = " <button id='inbox'> Unarchive </button>";
+  }
+
 
   if (!item.read){
     row.style = "background-color: lightgrey";
@@ -83,7 +115,35 @@ function DisplayEmails(item){
   cell3.addEventListener('click', function(){
     view_email(item);
   })
-  
+  cell4.addEventListener('click', function(){
+    add_archive(item);
+  })
+}
+
+function add_archive(item){
+
+  if (item.archived){
+    fetch(`emails/${item.id}`,{
+      method: 'PUT',
+      body: JSON.stringify({
+        archived: false
+      })
+    })
+    .then(()=> {
+      load_mailbox('inbox');
+    })
+  }
+  else{
+    fetch(`emails/${item.id}`,{
+      method: 'PUT',
+      body: JSON.stringify({
+        archived: true
+      })
+    })
+    .then(()=> {
+      load_mailbox('inbox');
+    })
+  }
 }
 
 function view_email(item){
