@@ -1,3 +1,7 @@
+// window.onpopstate = function(event) {
+//   console.log(event.state);
+// }
+
 document.addEventListener('DOMContentLoaded', function() {
 
   // Use buttons to toggle between views
@@ -24,10 +28,13 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+  // history.pushState({}, "", `compose`)
+
 
 } 
 
 function load_mailbox(mailbox) {
+  console.log(mailbox);
   let sentpath = false;
   let archived = false;
 
@@ -38,9 +45,7 @@ function load_mailbox(mailbox) {
   if (mailbox == 'archive'){
     archived = true;
   }
-
-  console.log("first")
-  console.log(sentpath);
+  // history.pushState({mailbox: mailbox}, "", `${mailbox}`)
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
@@ -59,23 +64,16 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
 
-    // Print emails
-    console.log("before leaving");
-    console.log(sentpath);
     // emails.forEach(DisplayEmails);
     for (var i = 0; i < emails.length;++i){
-      DisplayEmails(emails[0], sentpath, archived);
+      DisplayEmails(emails[i], sentpath, archived);
     }
     // emails.forEach(email => DisplayEmails(email, sentpath));
-    
-    console.log("after returning");
-    console.log(sentpath);
+  
     });
   }
 
 function DisplayEmails(item, sentpath, archived){
-  console.log("second");
-  console.log(sentpath);
   //searching for table
   var table = document.querySelector('tbody');
   
